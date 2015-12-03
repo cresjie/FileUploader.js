@@ -1,6 +1,6 @@
 (function(window){
 	
-	window.fileUploader = function(options, header){
+	window.FileUploader = function(options, header){
 		var _options = {
 			method: 'get',
 			data:{}
@@ -10,12 +10,12 @@
 				'X-Requested-With': 'XMLHttpRequest',
 		};
 
-		if( !(this instanceof fileUploader)){
-			return new fileUploader(options, header);
+		if( !(this instanceof FileUploader)){
+			return new FileUploader(options, header);
 		}
 
-		this.extend(_options, options);
-		this.extend(_header, header);
+		FileUploader.extend(_options, options);
+		FileUploader.extend(_header, header);
 		var xhr = new XMLHttpRequest();
 
 		if(_options.method.toLowerCase() == 'get'){
@@ -29,12 +29,17 @@
 		for(var key in _header)
 			xhr.setRequestHeader(key, _header[key]);
 
-		if(typeof _options.data == 'object')
-			_options.data = this.toFormData(_options.data);
+		
+		if( !_options.data || ( _options.data && _options.data.constructor != FormData) )
+			_options.data = FileUploader.toFormData(_options.data);
 
 		//add events
-		xhr.upload.onprogress =  _options.progress;
+		
 		xhr.onabort = _options.abort;
+		xhr.upload.onprogress =  function(e){
+			if(_options.progress)
+				_options.progress.call(this, (e.loaded/e.total) * 100, e);
+		};
 		xhr.onload = function(e){
 
 			var response = xhr.responseText;
@@ -72,18 +77,22 @@
 		return this;
 	}
 
-	fileUploader.prototype.toFormData = function(key,value){
+	FileUploader.toFormData = function(key,value){
 		var formData = new FormData();
-		if(key.constructor == String){
-			formData.append(key,value);
+		if(key){
+			if(key.constructor == String){
+				formData.append(key,value);
+			}
+			if(key.constructor == Object){
+				for(var field in key)
+					formData.append(field, key[field]);
+			}
 		}
-		if(key.constructor == Object){
-			for(var field in key)
-				formData.append(field, key[field]);
-		}
+		
 		return formData;
 	}
-	fileUploader.prototype.extend = function(obj,obj2){
+	
+	FileUploader.extend = function(obj,obj2){
 		for(var field in obj2){
 			obj[field] = obj2[field];
 		}
