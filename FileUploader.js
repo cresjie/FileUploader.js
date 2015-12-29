@@ -1,3 +1,10 @@
+/**
+ * Plugin: FileUploader
+ * Author: Cres Jie Labasano
+ * Email: cresjie@gmail.com
+ * Github: http://github.com/cresjie
+ * 
+ */
 (function(window){
 	
 	window.FileUploader = function(options, header){
