@@ -71,6 +71,9 @@
 				_options.complete.call(this,response,e)
 		};
 		
+		xhr.onerror = function(e,r){
+			_options.error.call(this,e,r);
+		}
 
 		xhr.send(_options.data);
 
