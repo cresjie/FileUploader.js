@@ -29,9 +29,12 @@
 			var params = Object.keys(_options.data).map(function(k) {
 					    return encodeURIComponent(k) + '=' + encodeURIComponent(_options.data[k])
 					}).join('&')
-			xhr.open(_options.method, _options.url + '?'+params);
-		}else
-			xhr.open(_options.method, _options.url);
+			xhr.open(_options.method, _options.url + '?'+params, true);
+		} else {
+			xhr.open(_options.method, _options.url, true);
+			
+		}
+			
 
 		for(var key in _header)
 			xhr.setRequestHeader(key, _header[key]);
@@ -47,7 +50,7 @@
 			if(_options.progress)
 				_options.progress.call(this, (e.loaded/e.total) * 100, e);
 		};
-		xhr.onload = function(e){
+		xhr.onreadystatechange = function(e){
 
 			var response = xhr.responseText;
 
