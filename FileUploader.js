@@ -62,16 +62,23 @@
 	              response = "Invalid JSON response from server.";
 	            }
 			}
-			if(xhr.status == 200){
-				if(_options.success)
-					_options.success.call(this,response,e);
-			}else{
-				if(_options.error)
-					_options.error.call(this,response,e)
+
+			if(xhr.readyState  == 4) {
+				if(xhr.status == 200){
+					if(_options.success)
+						_options.success.call(this,response,e);
+				}else{
+					if(_options.error)
+						_options.error.call(this,response,e)
+				}
+
+				if(_options.complete) {
+					_options.complete.call(this,response,e)
+				}
 			}
 
-			if(_options.complete)
-				_options.complete.call(this,response,e)
+				
+			
 		};
 		
 		xhr.onerror = function(e,r){
