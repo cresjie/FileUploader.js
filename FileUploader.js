@@ -8,8 +8,15 @@
 (function(window){
 	
 	window.FileUploader = function(options, header){
-		var _options = {
+
+		var fn = function(){},
+			_options = {
 			method: 'get',
+			error: fn,
+			complete: fn,
+			success: fn,
+			progress: fn,
+
 			data:{}
 		},
 			_header = {
@@ -47,38 +54,32 @@
 		
 		xhr.onabort = _options.abort;
 		xhr.upload.onprogress =  function(e){
-			if(_options.progress)
-				_options.progress.call(this, (e.loaded/e.total) * 100, e);
+			_options.progress.call(this, (e.loaded/e.total) * 100, e);
 		};
 		xhr.onreadystatechange = function(e){
+			if( xhr.readyState === 4 ){
+				var response = xhr.responseText;
 
-			var response = xhr.responseText;
-
-			if(xhr.getResponseHeader("content-type") && xhr.getResponseHeader("content-type").indexOf("application/json") > -1 ){
-				try {
-	              response = JSON.parse(response);
-	            } catch (_error) {
-	              e = _error;
-	              response = "Invalid JSON response from server.";
-	            }
-			}
-
-			if(xhr.readyState  == 4) {
+				if(xhr.getResponseHeader("content-type") && xhr.getResponseHeader("content-type").indexOf("application/json") > -1 ){
+					try {
+		              response = JSON.parse(response);
+		            } catch (_error) {
+		              e = _error;
+		              response = "Invalid JSON response from server.";
+		            }
+				}
 				if(xhr.status == 200){
-					if(_options.success)
-						_options.success.call(this,response,e);
+					_options.success.call(this,response,e);
 				}else{
-					if(_options.error)
-						_options.error.call(this,response,e)
+					_options.error.call(this,response,e)
 				}
-
-				if(_options.complete) {
-					_options.complete.call(this,response,e)
-				}
-			}
 
 				
-			
+				_options.complete.call(this,response,e)
+				
+			}
+
+					
 		};
 		
 		xhr.onerror = function(e,r){
