@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>FileUploader</title>
+	<script type="text/javascript" src="../FileUploader.js"></script>
+	<script type="text/javascript">
+		var data = {
+			first_name: 'Cres Jie',
+			last_name: 'Labasano',
+			favorites: {
+				drinks: {
+					soft: ['coke', 'sprite']
+				}
+			},
+			siblings: ['CJ', 'Chene']
+		};
+		new FileUploader({
+			url: 'request.php',
+			data: data,
+			success: function(response){
+				alert(response)
+			}
+		});
+	</script>
+</head>
+<body>
+
+</body>
+</html>

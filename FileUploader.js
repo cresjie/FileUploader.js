@@ -11,7 +11,7 @@
 
 		var fn = function(){},
 			_options = {
-			method: 'get',
+			method: 'post',
 			error: fn,
 			complete: fn,
 			success: fn,
@@ -47,8 +47,9 @@
 			xhr.setRequestHeader(key, _header[key]);
 
 		
-		if( !_options.data || ( _options.data && _options.data.constructor != FormData) )
+		if( !_options.data || ( _options.data && _options.data.constructor != FormData) ) {
 			_options.data = FileUploader.toFormData(_options.data);
+		}
 
 		//add events
 		
@@ -105,12 +106,27 @@
 				formData.append(key,value);
 			}
 			if(key.constructor == Object){
-				for(var field in key)
-					formData.append(field, key[field]);
+				FileUploader.appendFormdata(formData, key);
 			}
 		}
 		
 		return formData;
+	}
+
+	FileUploader.appendFormdata = function(formdata, data, name){
+		name = name || '';
+	    if (typeof data === 'object'){
+	    	for(var index in data) {
+	    		if (name == ''){
+	                FileUploader.appendFormdata(formdata, data[index], index);
+	            } else {
+	                FileUploader.appendFormdata(formdata, data[index], name + '['+index+']');
+	            }
+	    	}
+	       
+	    } else {
+	        formdata.append(name, data);
+	    }
 	}
 	
 	FileUploader.extend = function(obj,obj2){
