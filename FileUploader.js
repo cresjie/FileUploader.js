@@ -115,7 +115,7 @@
 
 	FileUploader.appendFormdata = function(formdata, data, name){
 		name = name || '';
-	    if (typeof data === 'object'){
+	    if (data && (data.constructor == Object || data.constructor == Array) ){
 	    	for(var index in data) {
 	    		if (name == ''){
 	                FileUploader.appendFormdata(formdata, data[index], index);
